@@ -14,10 +14,10 @@ from kivy.properties import ListProperty
 
 
 class ChessBoardWidget(Widget):
-    floatingPiecePos = ListProperty([0, 0])
-    floatingPiece = '.'
-    floatingPieceFrom = -1
-    floatingpieceAnimateFromOrigin = False
+    _moving_piece_pos = ListProperty([0, 0])
+    _moving_piece = '.'
+    _moving_piece_from = -1
+    _animate_from_origin = False
 
     def set_position(self, fen):
         self.fen = fen
@@ -25,68 +25,66 @@ class ChessBoardWidget(Widget):
         for i in range(1, 9):
             self.position = self.position.replace(str(i), '.' * i)
 
-    def to_square(self, touch):
-        f = int((touch.x - self.bottomLeft[0]) / self.squareSize)
-        r = 7 - int((touch.y - self.bottomLeft[1]) / self.squareSize)
-        return -1 if (touch.x - self.bottomLeft[0]) < 0 or f > 7 or (
-            touch.y - self.bottomLeft[1]) < 0 or r > 7 else f + r * 8
+    def _to_square(self, touch):
+        f = int((touch.x - self.bottom_left[0]) / self.square_size)
+        r = 7 - int((touch.y - self.bottom_left[1]) / self.square_size)
+        return -1 if (touch.x - self.bottom_left[0]) < 0 or f > 7 or (
+            touch.y - self.bottom_left[1]) < 0 or r > 7 else f + r * 8
 
-    def to_coordinates(self, square):
-        return (square % 8) * self.squareSize + self.bottomLeft[0], (7 - (square / 8)) * self.squareSize + \
-                                                                    self.bottomLeft[1]
+    def _to_coordinates(self, square):
+        return (square % 8) * self.square_size + self.bottom_left[0], (7 - (square / 8)) * self.square_size + self.bottom_left[1]
 
-    def highlight_square(self, square):
+    def _highlight_square(self, square):
         with self.canvas:
-            Color(*self.highlightColor)
-            left, bottom = self.to_coordinates(square)
-            Line(points=[left, bottom, left + self.squareSize, bottom, left + self.squareSize, bottom + self.squareSize,
-                         left, bottom + self.squareSize], width=2, close=True)
+            Color(*self.highlight_color)
+            left, bottom = self._to_coordinates(square)
+            Line(points=[left, bottom, left + self.square_size, bottom, left + self.square_size, bottom + self.square_size,
+                         left, bottom + self.square_size], width=2, close=True)
 
-    def draw_piece(self, piece, position):
+    def _draw_piece(self, piece, position):
         with self.canvas:
             Color(*self.white)
-            label = self.pieceTextures[self.backgroundTextures[piece]]
+            label = self.piece_textures[self._background_textures[piece]]
             Rectangle(texture=label.texture, pos=position, size=label.texture_size)
             Color(*self.black)
-            label = self.pieceTextures[piece]
+            label = self.piece_textures[piece]
             Rectangle(texture=label.texture, pos=position, size=label.texture_size)
 
-    def draw_pieces(self, skip=-1):
+    def _draw_pieces(self, skip=-1):
         i = 0
         for p in self.position:
             if p != '.' and i != skip:
-                self.draw_piece(p, self.to_coordinates(i))
+                self._draw_piece(p, self._to_coordinates(i))
             i += 1
 
-    def draw_board(self):
+    def _draw_board(self):
         with self.canvas:
             self.canvas.clear()
             Color(*self.dark)
-            Rectangle(pos=self.bottomLeft, size=(self.boardSize, self.boardSize))
+            Rectangle(pos=self.bottom_left, size=(self.board_size, self.board_size))
             Color(*self.light)
             for row in range(8):
                 for file in range(8):
                     if (row + file) & 0x1:
                         Rectangle(pos=(
-                            self.bottomLeft[0] + file * self.squareSize, self.bottomLeft[1] + row * self.squareSize),
-                                  size=(self.squareSize, self.squareSize))
+                            self.bottom_left[0] + file * self.square_size, self.bottom_left[1] + row * self.square_size), size=(self.square_size, self.square_size))
 
-    def resize(self, instance, value):
-        self.squareSize = (min(self.size) / 8)
-        self.boardSize = self.squareSize * 8
-        self.bottomLeft = ((self.width - self.boardSize) / 2, (self.height - self.boardSize) / 2)
+    def _resize(self, instance, value):
+        self.square_size = (min(self.size) / 8)
+        self.board_size = self.square_size * 8
+        self.bottom_left = ((self.width - self.board_size) / 2, (self.height - self.board_size) / 2)
         # Generate textures
-        self.pieceTextures = {}
+        self.piece_textures = {}
         for piece in 'pPnNbBrRqQkKUVWXYZ':
-            self.pieceTextures[piece] = Label(text=piece, font_name='fonts/kivychess.ttf', font_size=self.squareSize)
-            self.pieceTextures[piece].texture_update()
-        self.draw_board()
-        self.draw_pieces()
+            self.piece_textures[piece] = Label(text=piece, font_name='fonts/kivychess.ttf', font_size=self.square_size)
+            self.piece_textures[piece].texture_update()
+        self._draw_board()
+        self._draw_pieces()
 
-    def animate_piece(self, touch, pos):
-        self.draw_board()
-        self.draw_pieces(skip=self.floatingPieceFrom)
-        self.draw_piece(self.floatingPiece, pos)
+    def _animate_piece(self, touch, pos):
+        self._draw_board()
+        self._draw_pieces(skip=self._moving_piece_from)
+        self._draw_piece(self._moving_piece, pos)
 
     def __init__(self):
         super(ChessBoardWidget, self).__init__()
@@ -94,82 +92,80 @@ class ChessBoardWidget(Widget):
         self.dark = (0.821, 0.545, 0.278)
         self.black = (0, 0, 0)
         self.white = (1, 1, 1)
-        self.highlightColor = (0.2, 0.710, 0.898)
-        self.bind(size=self.resize)
+        self.highlight_color = (0.2, 0.710, 0.898)
+        self.bind(size=self._resize)
         self.set_position('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
-        self.backgroundTextures = {'p': 'U', 'P': 'U', 'n': 'V', 'N': 'V', 'b': 'W', 'B': 'W', 'r': 'X', 'R': 'X',
-                                   'q': 'Y', 'Q': 'Y', 'k': 'Z', 'K': 'Z'}
-        self.bind(floatingPiecePos=self.animate_piece)
+        self._background_textures = {'p': 'U', 'P': 'U', 'n': 'V', 'N': 'V', 'b': 'W', 'B': 'W', 'r': 'X', 'R': 'X',
+                                    'q': 'Y', 'Q': 'Y', 'k': 'Z', 'K': 'Z'}
+        self.bind(_moving_piece_pos=self._animate_piece)
 
     def on_touch_down(self, touch):
-        square = self.to_square(touch)
-        if self.position[square] == '.' or (
-            self.floatingPiece.isupper() if self.position[square].islower() else self.floatingPiece.islower()):
-            self.floatingpieceAnimateFromOrigin = True
+        square = self._to_square(touch)
+        if self.position[square] == '.' or (self._moving_piece.isupper() if self.position[square].islower() else self._moving_piece.islower()):
+            self._animate_from_origin = True
             return
         else:
-            self.floatingpieceAnimateFromOrigin = False
+            self._animate_from_origin = False
 
         if square == -1:
-            self.floatingPiece = '.'
+            self._moving_piece = '.'
             return
         else:
-            self.floatingPiece = self.position[square]
-        self.floatingPieceFrom = square
-        self.draw_board()
-        self.draw_pieces()
-        self.highlight_square(square)
+            self._moving_piece = self.position[square]
+        self._moving_piece_from = square
+        self._draw_board()
+        self._draw_pieces()
+        self._highlight_square(square)
 
     def on_touch_move(self, touch):
-        if self.floatingPiece == '.':
+        if self._moving_piece == '.':
             return
-        self.draw_board()
-        self.draw_pieces(skip=self.floatingPieceFrom)
-        self.highlight_square(self.floatingPieceFrom)
-        self.draw_piece(self.floatingPiece, (touch.x - self.squareSize / 2, touch.y - self.squareSize / 2))
+        self._draw_board()
+        self._draw_pieces(skip=self._moving_piece_from)
+        self._highlight_square(self._moving_piece_from)
+        self._draw_piece(self._moving_piece, (touch.x - self.square_size / 2, touch.y - self.square_size / 2))
 
     @staticmethod
     def square_name(i):
         return 'abcdefgh'[i % 8] + str(8 - i / 8)
 
     def on_touch_up(self, touch):
-        square = self.to_square(touch)
-        if square == -1 or self.floatingPiece == '.' or square == self.floatingPieceFrom:
+        square = self._to_square(touch)
+        if square == -1 or self._moving_piece == '.' or square == self._moving_piece_from:
             return
-        move = self.square_name(self.floatingPieceFrom) + self.square_name(square)
+        move = self.square_name(self._moving_piece_from) + self.square_name(square)
         if move in sf.legalMoves(self.fen):
-            self.floatingPiecePos[0], self.floatingPiecePos[1] = self.to_coordinates(
-                self.floatingPieceFrom) if self.floatingpieceAnimateFromOrigin else (
-                touch.x - self.squareSize / 2, touch.y - self.squareSize / 2)
-            anim = Animation(floatingPiecePos=self.to_coordinates(square), duration=0.1, t='in_out_sine')
-            anim.start(self)
+            self._moving_piece_pos[0], self._moving_piece_pos[1] = self._to_coordinates(
+                self._moving_piece_from) if self._animate_from_origin else (touch.x - self.square_size / 2, touch.y - self.square_size / 2)
+            animation = Animation(_moving_piece_pos=self._to_coordinates(square), duration=0.1, t='in_out_sine')
+            animation.start(self)
             print('MOVE : ' + move)
         else:
-            if (self.floatingPiece == 'P' and square < 8) or (self.floatingPiece == 'p' and square > 55):
+            if (self._moving_piece == 'P' and square < 8) or (self._moving_piece == 'p' and square > 55):
                 #Show a popup for promotions
                 layout = GridLayout(cols=2)
 
                 def choose(piece):
                     popup.dismiss()
-                    move = self.square_name(self.floatingPieceFrom) + self.square_name(square) + piece
+                    move = self.square_name(self._moving_piece_from) + self.square_name(square) + piece
                     if move in sf.legalMoves(self.fen):
                         print('MOVE : ' + move + piece)
                     else:
-                        self.draw_board()
-                        self.draw_pieces()
+                        self._draw_board()
+                        self._draw_pieces()
 
                 for p in 'qrbn':
-                    btn = Button(text=p, font_name='fonts/kivychess.ttf', font_size=self.boardSize / 3)
+                    btn = Button(text=p, font_name='fonts/kivychess.ttf', font_size=self.board_size / 8)
                     btn.bind(on_release=lambda btn: choose(p))
                     layout.add_widget(btn)
-                popup = Popup(title='Promote to', content=layout)
+                popup = Popup(title='Promote to', content=layout, size_hint=(.5, .5))
                 popup.open()
             else:  # Illegal move
-                self.floatingPiecePos[0] = touch.x - self.squareSize / 2
-                self.floatingPiecePos[1] = touch.y - self.squareSize / 2
-                anim = Animation(floatingPiecePos=self.to_coordinates(self.floatingPieceFrom), duration=0.3,
-                                 t='in_out_sine')
-                anim.start(self)
+                self._moving_piece_pos[0] = touch.x - self.square_size / 2
+                self._moving_piece_pos[1] = touch.y - self.square_size / 2
+                animation = Animation(_moving_piece_pos=self._to_coordinates(self._moving_piece_from), duration=0.3,
+                                      t='in_out_sine')
+                animation.start(self)
         return
 
 
