@@ -18,6 +18,7 @@ class ChessBoardWidget(Widget):
     floatingPiecePos=ListProperty([0,0])
     floatingPiece='.'
     floatingPieceFrom=-1
+    floatingpieceAnimateFromOrigin=False
 
     def setPosition(self, fen):
         self.fen=fen
@@ -34,9 +35,9 @@ class ChessBoardWidget(Widget):
     def toCoordinates(self, square):
         return (square%8)*self.squareSize+self.bottomLeft[0],(7-(square/8))*self.squareSize+self.bottomLeft[1]
             
-    def highlightSquare(self, square, color):
+    def highlightSquare(self, square):
         with self.canvas:
-            Color(*color)
+            Color(*self.highlightColor)
             left, bottom=self.toCoordinates(square)
             Line(points=[left, bottom, left+self.squareSize, bottom, left+self.squareSize, bottom+self.squareSize, left, bottom+self.squareSize], width=2, close=True)
         
@@ -90,53 +91,56 @@ class ChessBoardWidget(Widget):
         self.dark = (0.821, 0.545, 0.278)
         self.black = (0, 0, 0)
         self.white = (1, 1, 1)
+        self.highlightColor=(0.2, 0.710, 0.898)
         self.bind(size=self.resize)
         self.setPosition('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
         self.backgroundTextures={'p':'U','P':'U','n':'V','N':'V','b':'W','B':'W','r':'X','R':'X','q':'Y','Q':'Y','k':'Z','K':'Z'}
         self.bind(floatingPiecePos=self.animateFloatingPiece)
+
     
     def on_touch_down(self, touch):
         square=self.toSquare(touch)
+        if self.position[square]=='.' or (self.floatingPiece.isupper() if self.position[square].islower() else self.floatingPiece.islower()):
+            self.floatingpieceAnimateFromOrigin=True
+            return
+        else : self.floatingpieceAnimateFromOrigin=False
+
         if square==-1 : 
-            touch.ud['movingPiece']='.'
+            self.floatingPiece='.'
             return
         else : 
-            touch.ud['movingPiece']=self.position[square]
-        if self.position[square]=='.' : return
-        touch.ud['fromSquare']=square
+            self.floatingPiece=self.position[square]
+        self.floatingPieceFrom=square
         self.drawBoard() #Draw the board
         self.drawPieces() #Draw pieces
-        self.highlightSquare(square,(1,1,0))
+        self.highlightSquare(square)
 
     def on_touch_move(self, touch):
-        if touch.ud['movingPiece']=='.' : return
+        if self.floatingPiece=='.' : return
         self.drawBoard() #Draw the board
-        self.drawPieces(skip=touch.ud['fromSquare'])#Draw pieces
-        self.highlightSquare(touch.ud['fromSquare'],(1,1,0))
-        self.drawPiece(touch.ud['movingPiece'],(touch.x-self.squareSize/2,touch.y-self.squareSize/2))
+        self.drawPieces(skip=self.floatingPieceFrom)#Draw pieces
+        self.highlightSquare(self.floatingPieceFrom)
+        self.drawPiece(self.floatingPiece,(touch.x-self.squareSize/2,touch.y-self.squareSize/2))
     
     def squareName(self, i):
         return 'abcdefgh'[i%8]+str(8-i/8)
     
     def on_touch_up(self, touch):
         square=self.toSquare(touch)
-        if square==-1 or touch.ud['movingPiece']=='.' or square==touch.ud['fromSquare'] : return
-        move=self.squareName(touch.ud['fromSquare'])+self.squareName(square)
+        if square==-1 or self.floatingPiece=='.' or square==self.floatingPieceFrom : return
+        move=self.squareName(self.floatingPieceFrom)+self.squareName(square)
         if move in sf.legalMoves(self.fen):
-            self.floatingPiece=touch.ud['movingPiece']
-            self.floatingPieceFrom=touch.ud['fromSquare']
-            self.floatingPiecePos[0]=touch.x-self.squareSize/2
-            self.floatingPiecePos[1]=touch.y-self.squareSize/2
-            anim = Animation(floatingPiecePos=self.toCoordinates(square), duration=0.04, t='in_out_sine')
+            self.floatingPiecePos[0],self.floatingPiecePos[1]=self.toCoordinates(self.floatingPieceFrom) if self.floatingpieceAnimateFromOrigin else (touch.x-self.squareSize/2, touch.y-self.squareSize/2)
+            anim = Animation(floatingPiecePos=self.toCoordinates(square), duration=0.1, t='in_out_sine')
             anim.start(self)
             print('MOVE : '+move)
         else:
-            if (touch.ud['movingPiece']=='P' and square<8) or (touch.ud['movingPiece']=='p' and square> 55):
+            if (self.floatingPiece=='P' and square<8) or (self.floatingPiece=='p' and square> 55):
                 #Show a popup for promotions
                 layout = GridLayout(cols=2)
                 def choose(piece):
                     popup.dismiss()
-                    move=self.squareName(touch.ud['fromSquare'])+self.squareName(square)+piece
+                    move=self.squareName(self.floatingPieceFrom)+self.squareName(square)+piece
                     if move in sf.legalMoves(self.fen):
                         print('MOVE : '+move+piece)
                     else:
@@ -148,12 +152,10 @@ class ChessBoardWidget(Widget):
                     layout.add_widget(btn)
                 popup = Popup(title='Promote to', content=layout)
                 popup.open()
-            else:
-                self.floatingPiece=touch.ud['movingPiece']
-                self.floatingPieceFrom=touch.ud['fromSquare']
+            else: #Illegal move
                 self.floatingPiecePos[0]=touch.x-self.squareSize/2
                 self.floatingPiecePos[1]=touch.y-self.squareSize/2
-                anim = Animation(floatingPiecePos=self.toCoordinates(touch.ud['fromSquare']), duration=0.3, t='in_out_sine')
+                anim = Animation(floatingPiecePos=self.toCoordinates(self.floatingPieceFrom), duration=0.3, t='in_out_sine')
                 anim.start(self)
         return      
 
