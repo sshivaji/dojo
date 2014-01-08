@@ -1,3 +1,18 @@
+# Copyright (C) 2013-2014 Jean-Francois Romang (jromang@posteo.de)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 import stockfish as sf
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -134,7 +149,7 @@ class ChessBoardWidget(Widget):
         if square == -1 or self._moving_piece == '.' or square == self._moving_piece_from:
             return
         move = self.square_name(self._moving_piece_from) + self.square_name(square)
-        if move in sf.legalMoves(self.fen):
+        if move in sf.legal_moves(self.fen):
             self._moving_piece_pos[0], self._moving_piece_pos[1] = self._to_coordinates(
                 self._moving_piece_from) if self._animate_from_origin else (touch.x - self.square_size / 2, touch.y - self.square_size / 2)
             animation = Animation(_moving_piece_pos=self._to_coordinates(square), duration=0.1, t='in_out_sine')
@@ -148,7 +163,7 @@ class ChessBoardWidget(Widget):
                 def choose(piece):
                     popup.dismiss()
                     move = self.square_name(self._moving_piece_from) + self.square_name(square) + piece
-                    if move in sf.legalMoves(self.fen):
+                    if move in sf.legal_moves(self.fen):
                         print('MOVE : ' + move + piece)
                     else:
                         self._draw_board()
