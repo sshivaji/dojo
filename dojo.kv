@@ -1,0 +1,29 @@
+#:kivy 1.0
+#:import cw chesswidget.ChessBoardWidget
+
+<Controller>:
+    label_wid: my_custom_label
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 0
+
+        Label:
+            id: title_label
+            text: root.title
+            size_hint_y: None
+            height: 20
+
+        ChessBoardWidget:
+
+        Button:
+            text: 'My controller info is: ' + root.info
+            on_press: root.do_action()
+            size_hint_y: None
+            height: 40
+
+        Label:
+            id: my_custom_label
+            text: 'My label before button press'
+            size_hint_y: None
+            height: 80

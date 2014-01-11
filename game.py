@@ -14,12 +14,12 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import stockfish as sf
+from kivy.event import EventDispatcher
+from kivy.properties import ListProperty, StringProperty
 
-
-class Game():
-    def __init__(self):
-        self.start_position = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-        self.moves = []
+class Game(EventDispatcher):
+    start_position = StringProperty('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+    moves = ListProperty([])
 
     def current_fen(self):
         return sf.get_fen(self.start_position, self.moves)

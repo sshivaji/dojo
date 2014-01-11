@@ -13,20 +13,42 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import stockfish as sf
-from game import Game
-from chesswidget import ChessBoardWidget
+import kivy
+kivy.require('1.0.5')
+
+from kivy.uix.floatlayout import FloatLayout
 from kivy.app import App
+from kivy.properties import ObjectProperty, StringProperty
+import stockfish as sf
 
 
-class MyApp(App):
-    def __init__(self):
-        self.title = sf.info().split(' by ')[0]
-        self.game = Game()
+#class MyApp(App):
+#   def build(self):
+#        self.title = sf.info().split(' by ')[0]
+#        self.game = Game()
+#        print self.game.moves
+#        print self.game.start_position
+#        return ChessBoardWidget(self.game)
+
+#MyApp().run()
+
+class Controller(FloatLayout):
+    '''Create a controller that receives a custom widget from the kv lang file.
+
+    Add an action to be called from the kv lang file.
+    '''
+    label_wid = ObjectProperty()
+    info = StringProperty()
+    title = StringProperty()
+
+    def do_action(self):
+        self.label_wid.text = 'My label after button press'
+        self.info = 'New info text'
+
+class DojoApp(App):
 
     def build(self):
-        return ChessBoardWidget()
-
+        return Controller(info='Hello world', title=sf.info().split(' by ')[0])
 
 if __name__ == '__main__':
-    MyApp().run()
+    DojoApp().run()

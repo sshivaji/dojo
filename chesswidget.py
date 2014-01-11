@@ -26,6 +26,7 @@ from kivy.properties import ListProperty
 
 #TODO PEP http://www.python.org/dev/peps/pep-0008/
 #TODO PEP http://www.python.org/dev/peps/pep-0257/
+#https://github.com/kivy/kivy/issues/996
 
 
 class ChessBoardWidget(Widget):
@@ -33,6 +34,13 @@ class ChessBoardWidget(Widget):
     _moving_piece = '.'
     _moving_piece_from = -1
     _animate_from_origin = False
+
+    def _update_position(self, instance, value):
+        print "UPDATING WITH MOVE" + str(value)
+        #self.fen = instance.get_fen()
+        #self.position = fen.split(' ')[0].replace('/', '')
+        #for i in range(1, 9):
+        #    self.position = self.position.replace(str(i), '.' * i)
 
     def set_position(self, fen):
         self.fen = fen
@@ -84,10 +92,11 @@ class ChessBoardWidget(Widget):
                         Rectangle(pos=(
                             self.bottom_left[0] + file * self.square_size, self.bottom_left[1] + row * self.square_size), size=(self.square_size, self.square_size))
 
-    def _resize(self, instance, value):
-        self.square_size = (min(self.size) / 8)
+    #def _resize(self, instance, value):
+    def on_size(self, instance, value):
+        self.square_size = int(min(self.size) / 8)
         self.board_size = self.square_size * 8
-        self.bottom_left = ((self.width - self.board_size) / 2, (self.height - self.board_size) / 2)
+        self.bottom_left = (int((self.width - self.board_size) / 2 + self.pos[0]), int((self.height - self.board_size) / 2 + self.pos[1]))
         # Generate textures
         self.piece_textures = {}
         for piece in 'pPnNbBrRqQkKUVWXYZ':
@@ -96,23 +105,28 @@ class ChessBoardWidget(Widget):
         self._draw_board()
         self._draw_pieces()
 
+
     def _animate_piece(self, touch, pos):
         self._draw_board()
         self._draw_pieces(skip=self._moving_piece_from)
         self._draw_piece(self._moving_piece, pos)
 
-    def __init__(self):
-        super(ChessBoardWidget, self).__init__()
+    def __init__(self, **kwargs):
+        super(ChessBoardWidget, self).__init__(**kwargs)
         self.light = (1, 0.808, 0.620)
         self.dark = (0.821, 0.545, 0.278)
         self.black = (0, 0, 0)
         self.white = (1, 1, 1)
         self.highlight_color = (0.2, 0.710, 0.898)
-        self.bind(size=self._resize)
+        #self.bind(size=self._resize)
         self.set_position('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
         self._background_textures = {'p': 'U', 'P': 'U', 'n': 'V', 'N': 'V', 'b': 'W', 'B': 'W', 'r': 'X', 'R': 'X',
                                     'q': 'Y', 'Q': 'Y', 'k': 'Z', 'K': 'Z'}
         self.bind(_moving_piece_pos=self._animate_piece)
+
+        #if game is not None:
+        #    game.bind(moves=self._update_position)
+        #    game.bind(start_position=self._update_position)
 
     def on_touch_down(self, touch):
         square = self._to_square(touch)
@@ -184,11 +198,11 @@ class ChessBoardWidget(Widget):
         return
 
 
-class MyApp(App):
-    def build(self):
-        self.title = sf.info().split(' by ')[0]
-        return ChessBoardWidget()
+#class MyApp(App):
+#    def build(self):
+#        self.title = sf.info().split(' by ')[0]
+#        return ChessBoardWidget()
 
 
-if __name__ == '__main__':
-    MyApp().run()
+#if __name__ == '__main__':
+#    MyApp().run()
