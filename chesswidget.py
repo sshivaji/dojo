@@ -34,13 +34,16 @@ class ChessBoardWidget(Widget):
     _moving_piece = '.'
     _moving_piece_from = -1
     _animate_from_origin = False
+    _game = None
 
-    def _update_position(self, instance, value):
+    def _update_position(self, g, value):
         print "UPDATING WITH MOVE" + str(value)
-        #self.fen = instance.get_fen()
-        #self.position = fen.split(' ')[0].replace('/', '')
-        #for i in range(1, 9):
-        #    self.position = self.position.replace(str(i), '.' * i)
+        self.fen = g.current_fen()
+        self.position = self.fen.split(' ')[0].replace('/', '')
+        for i in range(1, 9):
+            self.position = self.position.replace(str(i), '.' * i)
+        self._draw_board()
+        self._draw_pieces()
 
     def set_position(self, fen):
         self.fen = fen
@@ -111,6 +114,10 @@ class ChessBoardWidget(Widget):
         self._draw_pieces(skip=self._moving_piece_from)
         self._draw_piece(self._moving_piece, pos)
 
+    #def set_game(self, game):
+    #    game.bind(moves=self._update_position)
+    #    game.bind(start_position=self._update_position)
+
     def __init__(self, **kwargs):
         super(ChessBoardWidget, self).__init__(**kwargs)
         self.light = (1, 0.808, 0.620)
@@ -125,10 +132,25 @@ class ChessBoardWidget(Widget):
         self.bind(_moving_piece_pos=self._animate_piece)
 
         #if game is not None:
-        #    game.bind(moves=self._update_position)
-        #    game.bind(start_position=self._update_position)
+        #game.bind(moves=self._update_position)
+        #game.bind(start_position=self._update_position)
+
+    @property
+    def game(self):
+        return self._game
+
+    @game.setter
+    def game(self, g):
+        if self._game is not None:
+            self._game.unbind(moves=self._update_position)
+            self._game.unbind(start_position=self._update_position)
+        self._game=g
+        g.bind(moves=self._update_position)
+        g.bind(start_position=self._update_position)
+
 
     def on_touch_down(self, touch):
+        print self.game
         square = self._to_square(touch)
         if self.position[square] == '.' or (self._moving_piece.isupper() if self.position[square].islower() else self._moving_piece.islower()):
             self._animate_from_origin = True

@@ -30,8 +30,10 @@
             height: 20
 
         ChessBoardWidget:
+
             size_hint_y:  None #1.5 * float(root.width)/float(root.height)
             height: min (root.size[0], root.size[1]-200)
+            game: root.game
 
         Button:
             text: 'My controller info is: ' + root.info

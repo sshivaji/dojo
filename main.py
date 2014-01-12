@@ -21,6 +21,7 @@ from kivy.app import App
 from kivy.properties import ObjectProperty, StringProperty
 import stockfish as sf
 from game import Game
+from random import choice
 
 
 #class MyApp(App):
@@ -46,6 +47,8 @@ class Controller(FloatLayout):
     def do_action(self):
         self.label_wid.text = 'My label after button press'
         self.info = 'New info text'
+        #self.chessboard_wid.game=self.game
+        self.game.moves.append(choice(self.game.legal_moves()))
 
 class DojoApp(App):
 
