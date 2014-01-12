@@ -228,19 +228,19 @@ class ChessBoardWidget(Widget):
                 #Show a popup for promotions
                 layout = GridLayout(cols=2)
 
-                def choose(piece):
+                def choose(button):
                     popup.dismiss()
-                    move = self.square_name(self._moving_piece_from) + self.square_name(square) + piece
+                    move = self.square_name(self._moving_piece_from) + self.square_name(square) + button.piece
                     if move in sf.legal_moves(self.fen):
                         self._game.moves.append(move)
-                        print('MOVE : ' + move + piece)
                     else:
                         self._draw_board()
                         self._draw_pieces()
 
                 for p in 'qrbn':
                     btn = Button(text=p, font_name='fonts/kivychess.ttf', font_size=self.board_size / 8)
-                    btn.bind(on_release=lambda btn: choose(p))
+                    btn.piece = p
+                    btn.bind(on_release=lambda b: choose(b))
                     layout.add_widget(btn)
                 popup = Popup(title='Promote to', content=layout, size_hint=(.5, .5))
                 popup.open()
