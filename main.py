@@ -20,6 +20,7 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.app import App
 from kivy.properties import ObjectProperty, StringProperty
 import stockfish as sf
+from game import Game
 
 
 #class MyApp(App):
@@ -40,6 +41,7 @@ class Controller(FloatLayout):
     label_wid = ObjectProperty()
     info = StringProperty()
     title = StringProperty()
+    game = ObjectProperty()
 
     def do_action(self):
         self.label_wid.text = 'My label after button press'
@@ -48,7 +50,7 @@ class Controller(FloatLayout):
 class DojoApp(App):
 
     def build(self):
-        return Controller(info='Hello world', title=sf.info().split(' by ')[0])
+        return Controller(info='Hello world', title=sf.info().split(' by ')[0], game=Game())
 
 if __name__ == '__main__':
     DojoApp().run()
