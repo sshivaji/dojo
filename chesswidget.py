@@ -36,20 +36,47 @@ class ChessBoardWidget(Widget):
     _animate_from_origin = False
     _game = None
 
+    def _update_after_animation(self, anim, *args):
+        if hasattr(anim, 'fen'):
+            self.set_position(anim.fen)
+            self._draw_board()
+            self._draw_pieces()
+        elif hasattr(anim, 'move'):
+            print('ANIMMOVE : ' + anim.move)
+            self.fen = sf.get_fen(self._game.start_position, self._game.moves+[anim.move])
+            self._game.moves.append(anim.move)
+            self.set_position(self.fen)
+            self._draw_board()
+            self._draw_pieces()
+        else:
+            self._moving_piece_from = -1
+            self._moving_piece = '.'
+
+
     def _update_position(self, g, value):
-        print "UPDATING WITH MOVE" + str(value)
-        self.fen = g.current_fen()
-        self.position = self.fen.split(' ')[0].replace('/', '')
-        for i in range(1, 9):
-            self.position = self.position.replace(str(i), '.' * i)
-        self._draw_board()
-        self._draw_pieces()
+        #print "UPDATING WITH MOVE" + str(value)
+        if self.fen == g.current_fen():
+            return
+        if self.fen == sf.get_fen(g.start_position,g.moves[:-1]):  # Animate if this is a new move on current fen
+            self._moving_piece_from = self.square_number(g.moves[-1][:2])
+            self._moving_piece = self.position[self._moving_piece_from]
+            self._moving_piece_pos[0], self._moving_piece_pos[1] = self._to_coordinates(self._moving_piece_from)
+            animation = Animation(_moving_piece_pos=self._to_coordinates(self.square_number(g.moves[-1][2:4])), duration=0.1, t='in_out_sine')
+            animation.fen=g.current_fen()
+            animation.bind(on_complete=self._update_after_animation)
+            animation.start(self)
+        else:
+            self.set_position(g.current_fen())
+            self._draw_board()
+            self._draw_pieces()
 
     def set_position(self, fen):
         self.fen = fen
         self.position = fen.split(' ')[0].replace('/', '')
         for i in range(1, 9):
             self.position = self.position.replace(str(i), '.' * i)
+        self._moving_piece_from = -1
+        self._moving_piece = '.'
 
     def _to_square(self, touch):
         f = int((touch.x - self.bottom_left[0]) / self.square_size)
@@ -125,8 +152,8 @@ class ChessBoardWidget(Widget):
         self.black = (0, 0, 0)
         self.white = (1, 1, 1)
         self.highlight_color = (0.2, 0.710, 0.898)
-        #self.bind(size=self._resize)
-        self.set_position('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+        self.fen='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
+        self.set_position(self.fen)
         self._background_textures = {'p': 'U', 'P': 'U', 'n': 'V', 'N': 'V', 'b': 'W', 'B': 'W', 'r': 'X', 'R': 'X',
                                     'q': 'Y', 'Q': 'Y', 'k': 'Z', 'K': 'Z'}
         self.bind(_moving_piece_pos=self._animate_piece)
@@ -150,7 +177,6 @@ class ChessBoardWidget(Widget):
 
 
     def on_touch_down(self, touch):
-        print self.game
         square = self._to_square(touch)
         if self.position[square] == '.' or (self._moving_piece.isupper() if self.position[square].islower() else self._moving_piece.islower()):
             self._animate_from_origin = True
@@ -180,6 +206,10 @@ class ChessBoardWidget(Widget):
     def square_name(i):
         return 'abcdefgh'[i % 8] + str(8 - i / 8)
 
+    @staticmethod
+    def square_number(name):
+        return 'abcdefgh'.index(name[0]) + (8-int(name[1]))*8
+
     def on_touch_up(self, touch):
         square = self._to_square(touch)
         if square == -1 or self._moving_piece == '.' or square == self._moving_piece_from:
@@ -189,6 +219,8 @@ class ChessBoardWidget(Widget):
             self._moving_piece_pos[0], self._moving_piece_pos[1] = self._to_coordinates(
                 self._moving_piece_from) if self._animate_from_origin else (touch.x - self.square_size / 2, touch.y - self.square_size / 2)
             animation = Animation(_moving_piece_pos=self._to_coordinates(square), duration=0.1, t='in_out_sine')
+            animation.move = move
+            animation.bind(on_complete=self._update_after_animation)
             animation.start(self)
             print('MOVE : ' + move)
         else:
@@ -200,6 +232,7 @@ class ChessBoardWidget(Widget):
                     popup.dismiss()
                     move = self.square_name(self._moving_piece_from) + self.square_name(square) + piece
                     if move in sf.legal_moves(self.fen):
+                        self._game.moves.append(move)
                         print('MOVE : ' + move + piece)
                     else:
                         self._draw_board()
@@ -216,6 +249,7 @@ class ChessBoardWidget(Widget):
                 self._moving_piece_pos[1] = touch.y - self.square_size / 2
                 animation = Animation(_moving_piece_pos=self._to_coordinates(self._moving_piece_from), duration=0.3,
                                       t='in_out_sine')
+                animation.bind(on_complete=self._update_after_animation)
                 animation.start(self)
         return
 
