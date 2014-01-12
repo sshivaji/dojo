@@ -22,6 +22,11 @@ from kivy.properties import ObjectProperty, StringProperty
 import stockfish as sf
 from game import Game
 from random import choice
+from kivy.config import Config
+
+#Set start resolution
+Config.set('graphics', 'width', '480')
+Config.set('graphics', 'height', '800')
 
 
 #class MyApp(App):
