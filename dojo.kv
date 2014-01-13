@@ -46,3 +46,27 @@
             text: 'My label before button press'
             #size_hint_y: None
             #height: 80
+
+        BoxLayout:
+            orientation: 'horizontal'
+            padding: 0
+
+            Spinner:
+                text: 'Game'
+                size_hint: (None, None)
+                height: 40
+                width: 100
+                values: ('Home', 'Work', 'Other', 'Custom')
+
+            Spinner:
+                text: 'Options'
+                size_hint: (None, None)
+                height: 40
+                width: 100
+                values: ('Home', 'Work', 'Other', 'Custom')
+
+            Button:
+                text: '<<'
+                size_hint: (None, None)
+                height: 40
+                width: 40
