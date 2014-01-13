@@ -100,7 +100,7 @@ class ChessBoardWidget(Widget):
             label = self.piece_textures[self._background_textures[piece]]
             Rectangle(texture=label.texture, pos=position, size=label.texture_size)
             Color(*self.black)
-            label = self.piece_textures[piece]
+            label = self.piece_textures[self._front_textures[piece]]
             Rectangle(texture=label.texture, pos=position, size=label.texture_size)
 
     def _draw_pieces(self, skip=-1):
@@ -129,8 +129,8 @@ class ChessBoardWidget(Widget):
         self.bottom_left = (int((self.width - self.board_size) / 2 + self.pos[0]), int((self.height - self.board_size) / 2 + self.pos[1]))
         # Generate textures
         self.piece_textures = {}
-        for piece in 'pPnNbBrRqQkKUVWXYZ':
-            self.piece_textures[piece] = Label(text=piece, font_name='fonts/kivychess.ttf', font_size=self.square_size)
+        for piece in 'klmnopqrstuvHIJKLMNOPQRS':
+            self.piece_textures[piece] = Label(text=piece, font_name='fonts/ChessCases.ttf', font_size=self.square_size)
             self.piece_textures[piece].texture_update()
         self._draw_board()
         self._draw_pieces()
@@ -154,8 +154,8 @@ class ChessBoardWidget(Widget):
         self.highlight_color = (0.2, 0.710, 0.898)
         self.fen='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
         self.set_position(self.fen)
-        self._background_textures = {'p': 'U', 'P': 'U', 'n': 'V', 'N': 'V', 'b': 'W', 'B': 'W', 'r': 'X', 'R': 'X',
-                                    'q': 'Y', 'Q': 'Y', 'k': 'Z', 'K': 'Z'}
+        self._background_textures = { 'K':'k', 'Q':'l', 'R':'m', 'B':'n', 'N':'o', 'P':'p', 'k':'q', 'q':'r', 'r':'s', 'b':'t', 'n':'u', 'p':'v'}
+        self._front_textures = { 'K':'H', 'Q':'I', 'R':'J', 'B':'K', 'N':'L', 'P':'M', 'k':'N', 'q':'O', 'r':'P', 'b':'Q', 'n':'R', 'p':'S'}
         self.bind(_moving_piece_pos=self._animate_piece)
 
         #if game is not None:
