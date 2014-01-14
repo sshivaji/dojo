@@ -238,7 +238,7 @@ class ChessBoardWidget(Widget):
                         self._draw_pieces()
 
                 for p in 'qrbn':
-                    btn = Button(text=p, font_name='fonts/kivychess.ttf', font_size=self.board_size / 8)
+                    btn = Button(text=self._front_textures[p], font_name='fonts/ChessCases.ttf', font_size=self.board_size / 8)
                     btn.piece = p
                     btn.bind(on_release=lambda b: choose(b))
                     layout.add_widget(btn)
