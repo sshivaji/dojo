@@ -1,5 +1,6 @@
 #:kivy 1.0
 #:import cw chesswidget.ChessBoardWidget
+#:import gp gamepanel.GamePanel
 
 [HSeparator@Label]:
     size_hint_y: None
@@ -41,15 +42,20 @@
             size_hint_y: None
             height: 40
 
-        Label:
-            id: my_custom_label
-            text: 'My label before button press'
-            #size_hint_y: None
-            #height: 80
+        ScrollView:
+            GamePanel:
+                id: my_custom_label
+                text: 'My label before button press'
+                game: root.game
+                size_hint_y: None
+                valign: 'top'
+                #height: 80
 
         BoxLayout:
             orientation: 'horizontal'
             padding: 0
+            size_hint_y: None
+            height: 40
 
             Spinner:
                 text: 'Game'

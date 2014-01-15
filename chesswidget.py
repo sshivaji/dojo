@@ -95,13 +95,14 @@ class ChessBoardWidget(Widget):
                          left, bottom + self.square_size], width=2, close=True)
 
     def _draw_piece(self, piece, position):
-        with self.canvas:
-            Color(*self.white)
-            label = self.piece_textures[self._background_textures[piece]]
-            Rectangle(texture=label.texture, pos=position, size=label.texture_size)
-            Color(*self.black)
-            label = self.piece_textures[self._front_textures[piece]]
-            Rectangle(texture=label.texture, pos=position, size=label.texture_size)
+        if piece != '.':
+            with self.canvas:
+                Color(*self.white)
+                label = self.piece_textures[self._background_textures[piece]]
+                Rectangle(texture=label.texture, pos=position, size=label.texture_size)
+                Color(*self.black)
+                label = self.piece_textures[self._front_textures[piece]]
+                Rectangle(texture=label.texture, pos=position, size=label.texture_size)
 
     def _draw_pieces(self, skip=-1):
         i = 0
@@ -132,6 +133,11 @@ class ChessBoardWidget(Widget):
         for piece in 'klmnopqrstuvHIJKLMNOPQRS':
             self.piece_textures[piece] = Label(text=piece, font_name='fonts/ChessCases.ttf', font_size=self.square_size)
             self.piece_textures[piece].texture_update()
+        self._draw_board()
+        self._draw_pieces()
+
+    def on_pos(self, instance, value):
+        self.bottom_left = (int((self.width - self.board_size) / 2 + self.pos[0]), int((self.height - self.board_size) / 2 + self.pos[1]))
         self._draw_board()
         self._draw_pieces()
 
