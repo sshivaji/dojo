@@ -43,13 +43,19 @@
             height: 40
 
         ScrollView:
-            GamePanel:
-                id: my_custom_label
-                text: 'My label before button press'
-                game: root.game
+            GridLayout:
+                cols: 1
+                spacing: 10
                 size_hint_y: None
-                valign: 'top'
-                #height: 80
+                height: my_custom_label.texture_size[1]
+                GamePanel:
+                    id: my_custom_label
+                    text: 'My label before button press'
+                    game: root.game
+                    text_size: self.width, None
+                    size_hint: (1, None)
+                    size: self.parent.width, self.texture_size[1]
+                    valign: 'top'
 
         BoxLayout:
             orientation: 'horizontal'

@@ -34,10 +34,3 @@ class GamePanel(Label):
 
     def _update_panel(self, instance, value):
         self.text = ' '.join(sf.to_san(self._game.moves))
-
-    def on_size(self, instance, value):
-        #self.text_size=(value[0],None)
-        #self._update_panel(instance, value)
-        self.text_size=(self.width, self.height)
-        #self._update_panel(instance, value)
-        #self.parent.size=self.parent.size
