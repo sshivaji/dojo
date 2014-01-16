@@ -16,6 +16,7 @@
 from kivy.uix.label import Label
 import stockfish as sf
 
+
 class GamePanel(Label):
     _game = None
 
@@ -28,9 +29,15 @@ class GamePanel(Label):
         if self._game is not None:
             self._game.unbind(moves=self._update_panel)
             self._game.unbind(start_position=self._update_panel)
-        self._game=g
+        self._game = g
         g.bind(moves=self._update_panel)
         g.bind(start_position=self._update_panel)
 
     def _update_panel(self, instance, value):
-        self.text = ' '.join(sf.to_san(self._game.moves))
+        moves = sf.to_san(self._game.moves)
+        display_list = []
+        for i in range(0, len(moves)):
+            if not i & 1:
+                display_list.append(str(i / 2 + 1)+'. ')
+            display_list.append(moves[i])
+        self.text = ' '.join(display_list)

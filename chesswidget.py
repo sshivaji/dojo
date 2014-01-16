@@ -123,7 +123,6 @@ class ChessBoardWidget(Widget):
                         Rectangle(pos=(
                             self.bottom_left[0] + file * self.square_size, self.bottom_left[1] + row * self.square_size), size=(self.square_size, self.square_size))
 
-    #def _resize(self, instance, value):
     def on_size(self, instance, value):
         self.square_size = int(min(self.size) / 8)
         self.board_size = self.square_size * 8
@@ -141,15 +140,10 @@ class ChessBoardWidget(Widget):
         self._draw_board()
         self._draw_pieces()
 
-
     def _animate_piece(self, touch, pos):
         self._draw_board()
         self._draw_pieces(skip=self._moving_piece_from)
         self._draw_piece(self._moving_piece, pos)
-
-    #def set_game(self, game):
-    #    game.bind(moves=self._update_position)
-    #    game.bind(start_position=self._update_position)
 
     def __init__(self, **kwargs):
         super(ChessBoardWidget, self).__init__(**kwargs)
@@ -164,10 +158,6 @@ class ChessBoardWidget(Widget):
         self._front_textures = { 'K':'H', 'Q':'I', 'R':'J', 'B':'K', 'N':'L', 'P':'M', 'k':'N', 'q':'O', 'r':'P', 'b':'Q', 'n':'R', 'p':'S'}
         self.bind(_moving_piece_pos=self._animate_piece)
 
-        #if game is not None:
-        #game.bind(moves=self._update_position)
-        #game.bind(start_position=self._update_position)
-
     @property
     def game(self):
         return self._game
@@ -180,7 +170,6 @@ class ChessBoardWidget(Widget):
         self._game=g
         g.bind(moves=self._update_position)
         g.bind(start_position=self._update_position)
-
 
     def on_touch_down(self, touch):
         square = self._to_square(touch)
@@ -258,13 +247,3 @@ class ChessBoardWidget(Widget):
                 animation.bind(on_complete=self._update_after_animation)
                 animation.start(self)
         return
-
-
-#class MyApp(App):
-#    def build(self):
-#        self.title = sf.info().split(' by ')[0]
-#        return ChessBoardWidget()
-
-
-#if __name__ == '__main__':
-#    MyApp().run()
