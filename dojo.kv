@@ -36,11 +36,7 @@
             height: min (root.size[0], root.size[1]-200)
             game: root.game
 
-        Button:
-            text: 'My controller info is: ' + root.info
-            on_press: root.do_action()
-            size_hint_y: None
-            height: 40
+
 
         ScrollView:
             GridLayout:
@@ -64,6 +60,12 @@
             size_hint_y: None
             height: 40
 
+            Button:
+                text: 'My controller info is: ' + root.info
+                on_press: root.do_action()
+                size_hint_y: None
+                height: 40
+
             Spinner:
                 text: 'Game'
                 size_hint: (None, None)
@@ -72,14 +74,26 @@
                 values: ('Home', 'Work', 'Other', 'Custom')
 
             Spinner:
-                text: 'Options'
+                #text: 'Options'
                 size_hint: (None, None)
                 height: 40
                 width: 100
                 values: ('Home', 'Work', 'Other', 'Custom')
+                Image:
+                    source: 'fonts/iconmonstr-gear-icon-32.png'
+                    y: self.parent.y + 4
+                    x: self.parent.x + 4
+                    size: 32, 32
+                    #allow_stretch: True
 
             Button:
-                text: '<<'
+
                 size_hint: (None, None)
                 height: 40
                 width: 40
+                Image:
+                    source: 'fonts/iconmonstr-magnifier-5-icon-32.png'
+                    y: self.parent.y + 4
+                    x: self.parent.x + 4
+                    size: 32, 32
+                    #allow_stretch: True

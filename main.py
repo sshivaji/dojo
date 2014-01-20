@@ -24,20 +24,12 @@ from game import Game
 from random import choice
 from kivy.config import Config
 
+#TODO http://www.wefearchange.org/2012/06/the-right-way-to-internationalize-your.html
+
 #Set start resolution
 Config.set('graphics', 'width', '480')
 Config.set('graphics', 'height', '800')
 
-
-#class MyApp(App):
-#   def build(self):
-#        self.title = sf.info().split(' by ')[0]
-#        self.game = Game()
-#        print self.game.moves
-#        print self.game.start_position
-#        return ChessBoardWidget(self.game)
-
-#MyApp().run()
 
 class Controller(FloatLayout):
     '''Create a controller that receives a custom widget from the kv lang file.
