@@ -130,7 +130,7 @@ class ChessBoardWidget(Widget):
         # Generate textures
         self.piece_textures = {}
         for piece in 'klmnopqrstuvHIJKLMNOPQRS':
-            self.piece_textures[piece] = Label(text=piece, font_name='fonts/ChessCases.ttf', font_size=self.square_size)
+            self.piece_textures[piece] = Label(text=piece, font_name='ressources/ChessCases.ttf', font_size=self.square_size)
             self.piece_textures[piece].texture_update()
         self._draw_board()
         self._draw_pieces()
@@ -233,7 +233,7 @@ class ChessBoardWidget(Widget):
                         self._draw_pieces()
 
                 for p in 'qrbn':
-                    btn = Button(text=self._front_textures[p], font_name='fonts/ChessCases.ttf', font_size=self.board_size / 8)
+                    btn = Button(text=self._front_textures[p], font_name='ressources/ChessCases.ttf', font_size=self.board_size / 8)
                     btn.piece = p
                     btn.bind(on_release=lambda b: choose(b))
                     layout.add_widget(btn)
