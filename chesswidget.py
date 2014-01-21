@@ -69,6 +69,7 @@ class ChessBoardWidget(Widget):
             self.set_position(g.current_fen())
             self._draw_board()
             self._draw_pieces()
+        #print "END UPDATE"
 
     def set_position(self, fen):
         self.fen = fen

@@ -1,6 +1,8 @@
 #:kivy 1.0
 #:import cw chesswidget.ChessBoardWidget
 #:import gp gamepanel.GamePanel
+#:import ep enginepanel.EnginePanel
+#:import sf stockfish
 
 [HSeparator@Label]:
     size_hint_y: None
@@ -55,6 +57,16 @@
                     valign: 'top'
                     font_size: 16
 
+        EnginePanel:
+            font_size: 12
+            text: sf.info()
+            size_hint_y: None
+            height: 24
+            text_size: (self.parent.width, self.height)
+            halign: 'left'
+            #valign: 'middle'
+            max_lines: 1
+            #shorten: True
 
         BoxLayout:
             orientation: 'horizontal'

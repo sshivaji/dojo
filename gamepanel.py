@@ -34,6 +34,8 @@ class GamePanel(Label):
         g.bind(start_position=self._update_panel)
 
     def _update_panel(self, instance, value):
+        print 'PANEL UPDATE'
+        return
         moves = sf.to_san(self._game.moves)
         display_list = []
         for i in range(0, len(moves)):
@@ -41,3 +43,4 @@ class GamePanel(Label):
                 display_list.append(str(i / 2 + 1)+'. ')
             display_list.append(moves[i])
         self.text = ' '.join(display_list)
+        print 'END PANEL UPDATE'

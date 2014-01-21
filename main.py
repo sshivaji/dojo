@@ -23,6 +23,7 @@ import stockfish as sf
 from game import Game
 from random import choice
 from kivy.config import Config
+import time
 
 #TODO http://www.wefearchange.org/2012/06/the-right-way-to-internationalize-your.html
 
@@ -47,8 +48,18 @@ class Controller(FloatLayout):
         #self.chessboard_wid.game=self.game
         try:
             self.game.moves.append(choice(self.game.legal_moves()))
+
         except IndexError:
              print 'No legal moves'
+
+        #sf.stop()
+            #time.sleep(1)
+        print self.game.start_position
+        print self.game.moves
+        #sf.position(self.game.start_position, self.game.moves)
+        print 'afetrpos'
+        sf.go(infinite=True)
+        print 'go'
 
 class DojoApp(App):
 
