@@ -45,14 +45,16 @@
                 size_hint_y: None
                 height: my_custom_label.texture_size[1]
                 GamePanel:
+                    font_name: 'fonts/DroidChess.ttf'
                     id: my_custom_label
-                    text: 'My label before button press'
+                    text: 'Welcome to Dojo Chess.'
                     game: root.game
                     text_size: self.width, None
                     size_hint: (1, None)
                     size: self.parent.width, self.texture_size[1]
                     valign: 'top'
-                    font_size: 14
+                    font_size: 16
+
 
         BoxLayout:
             orientation: 'horizontal'
