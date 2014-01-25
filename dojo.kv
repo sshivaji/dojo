@@ -31,12 +31,43 @@
         orientation: 'vertical'
         padding: 0
 
-        HSeparator:
 
-            id: title_label
-            text: root.title
-            size_hint_y: None
-            height: 20
+        ActionBar:
+            pos_hint: {'bottom':1}
+            ActionView:
+                use_separator: True
+                ActionPrevious:
+                    title: root.title
+                    with_previous: False
+
+                ActionOverflow:
+                ActionButton:
+                    text: 'Btn0'
+                    icon: 'atlas://data/images/defaulttheme/audio-volume-high'
+                ActionButton:
+                    text: 'Test'
+                    on_press: root.do_action()
+                ActionButton:
+                    text: 'Btn2'
+                ActionButton:
+                    text: 'Btn3'
+                ActionButton:
+                    text: 'Btn4'
+                ActionGroup:
+                    text: 'Group1'
+                    ActionButton:
+                        text: 'Btn5 popo ml ml ml po sdq'
+                    ActionButton:
+                        text: 'Btn6'
+                        on_press: root.do_action_btn6()
+                    ActionButton:
+                        text: 'Btn7'
+
+        #HSeparator:
+        #    id: title_label
+        #    text: root.title
+        #    size_hint_y: None
+        #    height: 20
 
         ChessBoardWidget:
 
@@ -74,46 +105,4 @@
             max_lines: 1
         #    #shorten: True
 
-        BoxLayout:
-            orientation: 'horizontal'
-            padding: 0
-            size_hint_y: None
-            height: 40
 
-            Button:
-                text: 'My controller info is: ' + root.info
-                on_press: root.do_action()
-                size_hint_y: None
-                height: 40
-
-            Spinner:
-                text: 'Game'
-                size_hint: (None, None)
-                height: 40
-                width: 100
-                values: ('Home', 'Work', 'Other', 'Custom')
-
-            Spinner:
-                #text: 'Options'
-                size_hint: (None, None)
-                height: 40
-                width: 100
-                values: ('Home', 'Work', 'Other', 'Custom')
-                Image:
-                    source: 'ressources/iconmonstr-gear-icon-32.png'
-                    y: self.parent.y + 4
-                    x: self.parent.x + 4
-                    size: 32, 32
-                    #allow_stretch: True
-
-            Button:
-
-                size_hint: (None, None)
-                height: 40
-                width: 40
-                Image:
-                    source: 'ressources/iconmonstr-magnifier-5-icon-32.png'
-                    y: self.parent.y + 4
-                    x: self.parent.x + 4
-                    size: 32, 32
-                    #allow_stretch: True

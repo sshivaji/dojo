@@ -172,7 +172,23 @@ class ChessBoardWidget(Widget):
         g.bind(moves=self._update_position)
         g.bind(start_position=self._update_position)
 
+#TODO http://kivy.org/docs/guide/inputs.html
+
     def on_touch_down(self, touch):
+        # push the current coordinate, to be able to restore it later
+        touch.push()
+
+        # transform the touch coordinate to local space
+        touch.apply_transform_2d(self.to_local)
+
+        # dispatch the touch as usual to children
+        # the coordinate in the touch is now in local space
+        ret = super(ChessBoardWidget, self).on_touch_down(touch)
+
+        if not self.collide_point(*touch.pos):
+            touch.pop()
+            return ret
+
         square = self._to_square(touch)
         if self.position[square] == '.' or (self._moving_piece.isupper() if self.position[square].islower() else self._moving_piece.islower()):
             self._animate_from_origin = True
@@ -190,6 +206,9 @@ class ChessBoardWidget(Widget):
         self._draw_pieces()
         self._highlight_square(square)
 
+        touch.pop()
+        return ret
+
     def on_touch_move(self, touch):
         if self._moving_piece == '.':
             return
@@ -197,6 +216,8 @@ class ChessBoardWidget(Widget):
         self._draw_pieces(skip=self._moving_piece_from)
         self._highlight_square(self._moving_piece_from)
         self._draw_piece(self._moving_piece, (touch.x - self.square_size / 2, touch.y - self.square_size / 2))
+
+        return super(ChessBoardWidget, self).on_touch_move(touch)
 
     @staticmethod
     def square_name(i):
@@ -208,7 +229,7 @@ class ChessBoardWidget(Widget):
 
     def on_touch_up(self, touch):
         square = self._to_square(touch)
-        if square == -1 or self._moving_piece == '.' or square == self._moving_piece_from:
+        if square == -1 or self._moving_piece == '.' or square == self._moving_piece_from or not self.collide_point(*touch.pos):
             return
         move = self.square_name(self._moving_piece_from) + self.square_name(square)
         if move in sf.legal_moves(self.fen):
@@ -247,4 +268,6 @@ class ChessBoardWidget(Widget):
                                       t='in_out_sine')
                 animation.bind(on_complete=self._update_after_animation)
                 animation.start(self)
-        return
+
+        touch.ungrab(self)
+        return True

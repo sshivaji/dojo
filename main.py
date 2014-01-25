@@ -42,6 +42,9 @@ class Controller(FloatLayout):
     title = StringProperty()
     game = ObjectProperty()
 
+    def do_action_btn6(self):
+        print 'BUTTON6'
+
     def do_action(self):
         self.label_wid.text = 'My label after button press'
         self.info = 'New info text'
