@@ -11,6 +11,9 @@
     text_size: self.width, None
     valign: 'middle'
     halign: 'center'
+
+<Controller>:
+    label_wid: my_custom_label
     canvas.before:
         Color:
             rgba: .2, .2, .2, .8
@@ -18,10 +21,13 @@
             size: self.size
             pos: self.pos
 
-<Controller>:
-    label_wid: my_custom_label
-
     BoxLayout:
+        canvas.before:
+            Color:
+                rgb: .6, .6, .6
+            Rectangle:
+                size: self.size
+                source: 'ressources/background.png'
         orientation: 'vertical'
         padding: 0
 
