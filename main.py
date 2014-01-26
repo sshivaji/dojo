@@ -59,7 +59,7 @@ class Controller(FloatLayout):
             #time.sleep(1)
         print self.game.start_position
         print self.game.moves
-        #sf.position(self.game.start_position, self.game.moves)
+        sf.position(self.game.start_position, self.game.moves)
         print 'afetrpos'
         sf.go(infinite=True)
         print 'go'

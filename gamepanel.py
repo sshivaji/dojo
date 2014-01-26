@@ -35,8 +35,9 @@ class GamePanel(Label):
 
     def _update_panel(self, instance, value):
         print 'PANEL UPDATE'
-        return
-        moves = sf.to_san(self._game.moves)
+        #return
+        #moves = sf.to_san(self._game.moves)
+        moves=self._game.moves
         display_list = []
         for i in range(0, len(moves)):
             if not i & 1:
