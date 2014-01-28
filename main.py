@@ -48,21 +48,13 @@ class Controller(FloatLayout):
     def do_action(self):
         self.label_wid.text = 'My label after button press'
         self.info = 'New info text'
-        #self.chessboard_wid.game=self.game
         try:
             self.game.moves.append(choice(self.game.legal_moves()))
 
         except IndexError:
              print 'No legal moves'
 
-        #sf.stop()
-            #time.sleep(1)
-        print self.game.start_position
-        print self.game.moves
-        sf.position(self.game.start_position, self.game.moves)
-        print 'afetrpos'
-        sf.go(infinite=True)
-        print 'go'
+        sf.go(self.game.start_position, self.game.moves, infinite=True)
 
 class DojoApp(App):
 
