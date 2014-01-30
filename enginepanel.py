@@ -42,7 +42,7 @@ class EnginePanel(Label):
             self.currmove = uci_info[uci_info.index('currmove')+1]
         if 'nps' in uci_info:
             self.nps = uci_info[uci_info.index('nps')+1]
-        self.text = '[' + self.depth + '/' + self.seldepth + '] ' + self.score + ' ' + self.currmove + ' nps:' + self.nps
+        self.text = '[' + self.depth + '/' + self.seldepth + '] ' + self.score + ' ' + self.currmove + ' ' + str(int(self.nps)/1000) +'kN/s'
 
 
     def __init__(self, **kwargs):

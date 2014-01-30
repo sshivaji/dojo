@@ -23,6 +23,7 @@ import stockfish as sf
 from game import Game
 from random import choice
 from kivy.config import Config
+import multiprocessing
 import time
 
 #TODO http://www.wefearchange.org/2012/06/the-right-way-to-internationalize-your.html
@@ -59,6 +60,7 @@ class Controller(FloatLayout):
 class DojoApp(App):
 
     def build(self):
+        sf.set_option('threads', max(multiprocessing.cpu_count()-1, 1))
         return Controller(info='Hello world', title=sf.info().split(' by ')[0], game=Game())
 
 if __name__ == '__main__':
